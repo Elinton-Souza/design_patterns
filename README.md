@@ -40,11 +40,11 @@ design_patterns/
 │   ├── sem_padrao/singleton.py
 │   └── com_padrao/singleton.py
 ├── prototype/
-│   ├── sem_padrao/prototype.py
-│   └── com_padrao/prototype.py
+│   ├── prototype_sem_padrao.py
+│   └── prototype_padronizado.py
 └── builder/
-    ├── sem_padrao/builder.py
-    └── com_padrao/builder.py
+    ├── builder_sem_padrao.py
+    └── builder_padronizado.py
 ```
 
 ---
@@ -214,106 +214,108 @@ Quando um cliente vai comprar um carro customizado sob encomenda, ele se depara 
 
 ### Como funciona
 
-1. A classe do produto final (CarroCustomizado) possui os atributos, mas não os define de uma vez.
-2. A classe CarroBuilder cria os métodos modulares para adicionar cada opcional individualmente.
-3. O processo retorna o próprio construtor (return self) permitindo chamadas encadeadas.
-4. O método final build() entrega o veículo configurado para a produção.
-
+1. A classe `Carro` possui os atributos com valores padrão, mas não recebe tudo no construtor.
+2. A classe `CarroBuilder` tem métodos separados para definir motor, cor e adicionar cada opcional.
+3. Cada método retorna o próprio builder (`return self`), permitindo chamadas encadeadas.
+4. O método `build()` entrega o objeto `Carro` finalizado.
 
 ### Sem o padrão
 
 ```python
-# builder/sem_padrao/builder.py
+# builder/builder_sem_padrao.py
 
-class CarroCustomizado:
-    def __init__(self, modelo, motor, cor, banco_couro=False, teto_solar=False,
-                 multimidia=False, blindado=False):
-        self.modelo = modelo
+class Carro:
+    def __init__(
+        self,
+        motor: str = "1.0",
+        cor: str = "Prata",
+        tetoSolar: bool = False,
+        bancoCouro: bool = False
+    ):
         self.motor = motor
         self.cor = cor
-        self.banco_couro = banco_couro
-        self.teto_solar = teto_solar
-        self.multimidia = multimidia
-        self.blindado = blindado
+        self.tetoSolar = tetoSolar
+        self.bancoCouro = bancoCouro
 
-# Problema: parâmetros booleanos posicionais confusos — o que cada True/False significa?
-encomenda_cliente_a = CarroCustomizado("SUV Premium", "2.0 T", "Cinza", True, False, True, False)
-encomenda_cliente_b = CarroCustomizado("Hatch Pop", "1.0", "Preto", False, False, False, False)
+    def exibir_detalhes(self) -> None:
+        print("--- Detalhes do Carro ---")
+        print(f"Motor: {self.motor}")
+        print(f"Cor: {self.cor}")
+        print(f"Teto Solar: {'Sim' if self.tetoSolar else 'Não'}")
+        print(f"Banco de Couro: {'Sim' if self.bancoCouro else 'Não'}")
+        print("-------------------------\n")
+
+# Problema: é difícil saber o que cada True/False representa sem olhar a assinatura
+carroEsportivo = Carro(motor="V8 Turbo", cor="Vermelho", tetoSolar=True, bancoCouro=True)
+carroEsportivo.exibir_detalhes()
+
+carroEconomico = Carro(motor="1.0 Flex", cor="Preto")
+carroEconomico.exibir_detalhes()
 ```
 
 ### Com o padrão
 
 ```python
-# builder/com_padrao/builder.py
+# builder/builder_padronizado.py
 
-class CarroCustomizado:
+class Carro:
     def __init__(self):
-        self.modelo = None
-        self.motor = None
-        self.cor = None
-        self.banco_couro = False
-        self.teto_solar = False
-        self.multimidia = False
-        self.blindado = False
+        self.motor: str = "1.0"
+        self.cor: str = "Prata"
+        self.tetoSolar: bool = False
+        self.bancoCouro: bool = False
 
-    def __str__(self):
-        opcionais = [
-            "Banco de Couro" if self.banco_couro else None,
-            "Teto Solar" if self.teto_solar else None,
-            "Kit Multimídia" if self.multimidia else None,
-            "Blindagem" if self.blindado else None,
-        ]
-        itens = [i for i in opcionais if i]
-        return (f"{self.modelo} {self.motor} ({self.cor}) -> "
-                f"Opcionais: {', '.join(itens) if itens else 'Nenhum'}")
+    def exibir_detalhes(self) -> None:
+        print("--- Detalhes do Carro ---")
+        print(f"Motor: {self.motor}")
+        print(f"Cor: {self.cor}")
+        print(f"Teto Solar: {'Sim' if self.tetoSolar else 'Não'}")
+        print(f"Banco de Couro: {'Sim' if self.bancoCouro else 'Não'}")
+        print("-------------------------\n")
 
 
 class CarroBuilder:
     def __init__(self):
-        self._carro = CarroCustomizado()
+        self.carro = Carro()
 
-    def definir_base(self, modelo, motor, cor):
-        self._carro.modelo = modelo
-        self._carro.motor = motor
-        self._carro.cor = cor
+    def set_motor(self, motor: str) -> 'CarroBuilder':
+        self.carro.motor = motor
         return self
 
-    def adicionar_banco_couro(self):
-        self._carro.banco_couro = True
+    def set_cor(self, cor: str) -> 'CarroBuilder':
+        self.carro.cor = cor
         return self
 
-    def adicionar_teto_solar(self):
-        self._carro.teto_solar = True
+    def tetoSolar(self) -> 'CarroBuilder':
+        self.carro.tetoSolar = True
         return self
 
-    def adicionar_multimidia(self):
-        self._carro.multimidia = True
+    def bancoCouro(self) -> 'CarroBuilder':
+        self.carro.bancoCouro = True
         return self
 
-    def adicionar_blindagem(self):
-        self._carro.blindado = True
-        return self
-
-    def build(self):
-        return self._carro
+    def build(self) -> Carro:
+        return self.carro
 
 
-# Montagem passo a passo: legível, fluente e sem ambiguidades
-pedido_premium = (CarroBuilder()
-                  .definir_base("SUV Premium", "2.0 T", "Cinza")
-                  .adicionar_banco_couro()
-                  .adicionar_multimidia()
-                  .build())
+# Montagem passo a passo: cada etapa é clara e legível
+carroEsportivo = (
+    CarroBuilder()
+    .set_motor("V8 Turbo")
+    .set_cor("Vermelho")
+    .tetoSolar()
+    .bancoCouro()
+    .build()
+)
+carroEsportivo.exibir_detalhes()
 
-pedido_executivo = (CarroBuilder()
-                    .definir_base("Sedan Executivo", "2.5", "Preto")
-                    .adicionar_banco_couro()
-                    .adicionar_teto_solar()
-                    .adicionar_blindagem()
-                    .build())
-
-print(pedido_premium)    # SUV Premium 2.0 T (Cinza) -> Opcionais: Banco de Couro, Kit Multimídia
-print(pedido_executivo)  # Sedan Executivo 2.5 (Preto) -> Opcionais: Banco de Couro, Teto Solar, Blindagem
+carroEconomico = (
+    CarroBuilder()
+    .set_motor("1.0 Flex")
+    .set_cor("Preto")
+    .build()
+)
+carroEconomico.exibir_detalhes()
 ```
 
 ---
@@ -343,3 +345,17 @@ print(pedido_executivo)  # Sedan Executivo 2.5 (Preto) -> Opcionais: Banco de Co
 | Constrói objetos complexos passo a passo, em etapas bem definidas | Aumenta a complexidade com múltiplas classes novas |
 | Elimina construtores telescópicos com dezenas de parâmetros confusos | Pode ser *overengineering* para objetos simples |
 | Interface fluente melhora drasticamente a legibilidade do código | O cliente precisa conhecer os métodos de construção corretos |
+
+---
+
+## 📝 Conclusões do Grupo
+
+Ao longo deste trabalho, o grupo estudou e implementou três padrões criacionais do GoF dentro de um mesmo contexto de negócio — um sistema de concessionária — o que permitiu enxergar como cada padrão resolve um problema específico e complementar aos demais.
+
+O **Singleton** foi o padrão mais direto de entender: a ideia de ter uma única instância compartilhada faz sentido imediato em situações como conexões com banco de dados. A dificuldade foi perceber que, em Python, não existe construtor privado como em Java, então é preciso usar convenções (`get_instancia()`) para garantir o uso correto.
+
+O **Prototype** trouxe uma perspectiva interessante sobre criação de objetos: em vez de construir do zero, reutiliza-se um modelo já validado. O ponto de atenção foi entender a diferença entre cópia rasa (*shallow copy*) e cópia profunda (*deep copy*), pois usar a errada pode gerar objetos que compartilham referências sem querer.
+
+O **Builder** foi o padrão que mais impactou a legibilidade do código. Comparar o construtor com vários parâmetros booleanos versus a interface fluente deixou claro por que o padrão existe. A separação entre "o que construir" e "como construir" é uma das ideias mais úteis para projetos que crescem em complexidade.
+
+De forma geral, o grupo concluiu que padrões de projeto não são soluções universais — cada um resolve um problema específico e pode ser desnecessário em contextos simples. O valor está em reconhecer quando um problema se encaixa no padrão, e não em aplicá-los por padrão em todo projeto.
