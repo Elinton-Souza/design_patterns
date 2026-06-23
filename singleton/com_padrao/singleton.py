@@ -2,27 +2,22 @@
 
 
 class ConexaoBancoDados:
-    """
-    Singleton implementado via __new__.
+    _instancia = None  # guarda a única instância criada
 
-    Ao sobrescrever __new__, garantimos que Python nunca crie um segundo
-    objeto em memória — qualquer chamada a ConexaoBancoDados() retorna
-    sempre a mesma instância, sem precisar de um método get_instancia().
-    """
-
-    _instancia = None
-
-    def __new__(cls):
+    @classmethod
+    def get_instancia(cls):
         if cls._instancia is None:
-            print("[Criando a ÚNICA conexão física com o banco de dados...]")
-            cls._instancia = super().__new__(cls)
-            cls._instancia.status = "Conectado ao Banco da Concessionária"
+            print("[Criando a conexão com o banco de dados...]")
+            cls._instancia = ConexaoBancoDados()
         return cls._instancia
 
+    def __init__(self):
+        self.status = "Conectado ao Banco da Concessionária"
 
-# Módulos diferentes reutilizam a mesmíssima conexão
-modulo_estoque = ConexaoBancoDados()
-modulo_vendas = ConexaoBancoDados()
 
-print(modulo_estoque is modulo_vendas)  # True — conexão única e centralizada!
-print(modulo_estoque.status)            # Conectado ao Banco da Concessionária
+# Sempre usamos get_instancia() para garantir que só existe uma conexão
+modulo_estoque = ConexaoBancoDados.get_instancia()
+modulo_vendas = ConexaoBancoDados.get_instancia()
+
+print(modulo_estoque is modulo_vendas)  # True — é a mesma instância!
+print(modulo_estoque.status)

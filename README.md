@@ -76,9 +76,10 @@ No sistema da nossa concessionária, múltiplos módulos (vendas, estoque, custo
 
 ### Como funciona
 
-1. O método `__new__` é sobrescrito para interceptar a criação do objeto.
-2. A classe armazena sua própria instância única em um atributo estático privado.
-3. Qualquer chamada a `ConexaoBancoDados()` retorna sempre a mesma instância — sem necessidade de um método `get_instancia()` separado.
+1. A classe possui um atributo `_instancia` que começa como `None`.
+2. O método `get_instancia()` verifica se já existe uma instância criada.
+3. Se não existir, cria uma nova e a armazena. Se já existir, retorna a mesma.
+4. Todo o código usa `get_instancia()` em vez de chamar `ConexaoBancoDados()` diretamente.
 
 ### Sem o padrão
 
@@ -103,28 +104,24 @@ print(modulo_estoque is modulo_vendas)  # False — conexões duplicadas gastand
 # singleton/com_padrao/singleton.py
 
 class ConexaoBancoDados:
-    """
-    Singleton implementado via __new__.
+    _instancia = None  # guarda a única instância criada
 
-    Ao sobrescrever __new__, garantimos que Python nunca crie um segundo
-    objeto em memória — qualquer chamada a ConexaoBancoDados() retorna
-    sempre a mesma instância, sem precisar de um método get_instancia().
-    """
-
-    _instancia = None
-
-    def __new__(cls):
+    @classmethod
+    def get_instancia(cls):
         if cls._instancia is None:
-            print("[Criando a ÚNICA conexão física com o banco de dados...]")
-            cls._instancia = super().__new__(cls)
-            cls._instancia.status = "Conectado ao Banco da Concessionária"
+            print("[Criando a conexão com o banco de dados...]")
+            cls._instancia = ConexaoBancoDados()
         return cls._instancia
 
-# Módulos diferentes reutilizam a mesmíssima conexão
-modulo_estoque = ConexaoBancoDados()
-modulo_vendas = ConexaoBancoDados()
+    def __init__(self):
+        self.status = "Conectado ao Banco da Concessionária"
 
-print(modulo_estoque is modulo_vendas)  # True — conexão única e centralizada!
+# Sempre usamos get_instancia() para garantir que só existe uma conexão
+modulo_estoque = ConexaoBancoDados.get_instancia()
+modulo_vendas = ConexaoBancoDados.get_instancia()
+
+print(modulo_estoque is modulo_vendas)  # True — é a mesma instância!
+print(modulo_estoque.status)
 ```
 
 ---
