@@ -15,10 +15,10 @@ class Carro:
 
     def exibir_detalhes(self) -> None:
         print("--- Detalhes do Carro ---")
-        print(f"Motor: ${self.motor}")
-        print(f"Cor: ${self.cor}")
-        print(f"Teto Solar: ${'Sim' if self.tetoSolar else 'Não'}")
-        print(f"Banco de Couro: ${'Sim' if self.bancoCouro else 'Não'}")
+        print(f"Motor: {self.motor}")
+        print(f"Cor: {self.cor}")
+        print(f"Teto Solar: {'Sim' if self.tetoSolar else 'Não'}")
+        print(f"Banco de Couro: {'Sim' if self.bancoCouro else 'Não'}")
         print("-------------------------\n")
 
 
