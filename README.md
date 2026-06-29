@@ -348,12 +348,12 @@ carroEconomico.exibir_detalhes()
 
 ## 📝 Conclusões do Grupo
 
-Ao longo deste trabalho, o grupo estudou e implementou três padrões criacionais do GoF dentro de um mesmo contexto de negócio — um sistema de concessionária — o que permitiu enxergar como cada padrão resolve um problema específico e complementar aos demais.
+Ao longo deste trabalho, o grupo estudou três padrões criacionais do GoF dentro de um mesmo contexto — um sistema de concessionária. Isso ajudou a enxergar como cada padrão resolve um problema específico, e como eles se complementam.
 
-O **Singleton** foi o padrão mais direto de entender: a ideia de ter uma única instância compartilhada faz sentido imediato em situações como conexões com banco de dados. A dificuldade foi perceber que, em Python, não existe construtor privado como em Java, então é preciso usar convenções (`get_instancia()`) para garantir o uso correto.
+O **Singleton** foi o mais direto: uma única instância compartilhada faz sentido imediato em situações como conexões com banco de dados. A questão em Python é que não existe construtor privado como em Java — a solução é usar convenções como (`get_instancia()`) para garantir o uso correto.
 
-O **Prototype** trouxe uma perspectiva interessante sobre criação de objetos: em vez de construir do zero, reutiliza-se um modelo já validado. O ponto de atenção foi entender a diferença entre cópia rasa (*shallow copy*) e cópia profunda (*deep copy*), pois usar a errada pode gerar objetos que compartilham referências sem querer.
+O **Prototype** trouxe uma perspectiva diferente: em vez de construir do zero, você reutiliza um modelo já validado. O ponto crítico é entender a diferença entre shallow copy e deep copy. Usar a errada gera objetos que compartilham referências sem querer — e o erro aparece tarde.
 
-O **Builder** foi o padrão que mais impactou a legibilidade do código. Comparar o construtor com vários parâmetros booleanos versus a interface fluente deixou claro por que o padrão existe. A separação entre "o que construir" e "como construir" é uma das ideias mais úteis para projetos que crescem em complexidade.
+O **Builder** foi o que mais impactou a legibilidade. Comparar um construtor com vários parâmetros booleanos com uma interface fluente deixa óbvio por que o padrão existe. A separação entre "o que construir" e "como construir" é uma das ideias mais úteis para projetos que crescem em complexidade.
 
-De forma geral, o grupo concluiu que padrões de projeto não são soluções universais — cada um resolve um problema específico e pode ser desnecessário em contextos simples. O valor está em reconhecer quando um problema se encaixa no padrão, e não em aplicá-los por padrão em todo projeto.
+A conclusão geral: padrões de projeto não são soluções universais. Cada um resolve um problema específico e pode ser desnecessário em contextos simples. O valor está em reconhecer quando o problema se encaixa no padrão — não em aplicá-lo por padrão em todo projeto.
