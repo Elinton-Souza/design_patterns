@@ -1,8 +1,5 @@
-# com_padrao/singleton.py
-
-
 class ConexaoBancoDados:
-    _instancia = None  # guarda a única instância criada
+    _instancia = None
 
     @classmethod
     def get_instancia(cls):
@@ -15,9 +12,8 @@ class ConexaoBancoDados:
         self.status = "Conectado ao Banco da Concessionária"
 
 
-# Sempre usamos get_instancia() para garantir que só existe uma conexão
 modulo_estoque = ConexaoBancoDados.get_instancia()
 modulo_vendas = ConexaoBancoDados.get_instancia()
 
-print(modulo_estoque is modulo_vendas)  # True — é a mesma instância!
+print(modulo_estoque is modulo_vendas)
 print(modulo_estoque.status)

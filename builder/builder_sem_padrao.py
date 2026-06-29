@@ -1,11 +1,9 @@
-# sem padrão/builder
-
 class Carro:
     def __init__(
-        self, 
-        motor: str = "1.0", 
-        cor: str = "Prata", 
-        tetoSolar: bool = False, 
+        self,
+        motor: str = "1.0",
+        cor: str = "Prata",
+        tetoSolar: bool = False,
         bancoCouro: bool = False
     ):
         self.motor = motor
@@ -23,15 +21,15 @@ class Carro:
 
 
 carroEsportivo = Carro(
-    motor="V8 Turbo", 
-    cor="Vermelho", 
-    tetoSolar=True, 
+    motor="V8 Turbo",
+    cor="Vermelho",
+    tetoSolar=True,
     bancoCouro=True
 )
 carroEsportivo.exibir_detalhes()
 
 carroEconomico = Carro(
-    motor="1.0 Flex", 
+    motor="1.0 Flex",
     cor="Preto"
 )
 carroEconomico.exibir_detalhes()

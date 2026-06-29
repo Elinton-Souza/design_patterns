@@ -1,5 +1,3 @@
-# Com padrão/builder
-
 class Carro:
     def __init__(self):
         self.motor: str = "1.0"
@@ -22,7 +20,7 @@ class CarroBuilder:
 
     def set_motor(self, motor: str) -> 'CarroBuilder':
         self.carro.motor = motor
-        return self 
+        return self
 
     def set_cor(self, cor: str) -> 'CarroBuilder':
         self.carro.cor = cor
@@ -37,8 +35,8 @@ class CarroBuilder:
         return self
 
     def build(self) -> Carro:
-        carroPronto = self.carro
-        return carroPronto
+        return self.carro
+
 
 carroEsportivo = (
     CarroBuilder()
